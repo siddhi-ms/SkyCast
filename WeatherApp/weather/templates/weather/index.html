@@ -1,0 +1,69 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkyCast</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body
+    {% if weather.image %}
+    style="background-image: url('{{ weather.image }}');"
+    {% else %}
+    style="background-image: url('https://images.pexels.com/photos/3008509/pexels-photo-3008509.jpeg?auto=compress&cs=tinysrgb&w=1600');"
+    {% endif %}  
+  >
+    <div class="container">
+      <h1 class="heading">SkyCast</h1>
+
+      <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="city" placeholder="Enter City" required />
+        <button type="submit" class="btn">Search</button>
+      </form>
+
+      {% if weather %}
+      <div class="weather">
+        <div class="left">
+          <h2 class="temp">{{ weather.temperature }}&#176; C</h2>
+          <h2 class="city">{{ weather.city }}</h2>
+        </div>
+        <div class="right">
+          <div class="icon">
+            <img
+              src="http://openweathermap.org/img/w/{{ weather.icon }}.png"
+              width="120px"
+              alt="Weather icon"
+            />
+          </div>
+          <div class="condition">
+            <p>{{ weather.condition|capfirst }}</p>
+            <p>{{ weather.day }}</p>
+          </div>
+        </div>
+      </div>
+      {% elif error %}
+      <div class="error">
+        <p style="color: red; font-weight: bold">⚠️ {{ error|capfirst }}</p>
+      </div>
+      {% endif %}
+    </div>
+
+    {% if exception_occurred %}
+    <script>
+      window.onload = function () {
+        alert(
+          "An error occurred while fetching the weather data. Please try again later."
+        );
+      };
+    </script>
+    {% endif %}
+  </body>
+</html>
